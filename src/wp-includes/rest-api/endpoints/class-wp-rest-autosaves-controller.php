@@ -73,7 +73,7 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 	}
 
 	/**
-	 * Registers routes for autosaves.
+	 * Registers the routes for autosaves.
 	 *
 	 * @since 5.0.0
 	 *
@@ -151,7 +151,7 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_items_permissions_check( $request ) {
@@ -160,9 +160,7 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 			return $parent;
 		}
 
-		$parent_post_type_obj = get_post_type_object( $parent->post_type );
-
-		if ( ! current_user_can( $parent_post_type_obj->cap->edit_post, $parent->ID ) ) {
+		if ( ! current_user_can( 'edit_post', $parent->ID ) ) {
 			return new WP_Error(
 				'rest_cannot_read',
 				__( 'Sorry, you are not allowed to view autosaves of this post.' ),
@@ -249,7 +247,7 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_Post|WP_Error Revision post object if ID is valid, WP_Error otherwise.
 	 */
 	public function get_item( $request ) {
@@ -284,7 +282,7 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_items( $request ) {
@@ -342,7 +340,7 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param mixed $post_data Associative array containing the post data.
+	 * @param array $post_data Associative array containing the post data.
 	 * @return mixed The autosave revision ID or WP_Error.
 	 */
 	public function create_post_autosave( $post_data ) {
@@ -401,7 +399,6 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller {
 	 *
 	 * @param WP_Post         $post    Post revision object.
 	 * @param WP_REST_Request $request Request object.
-	 *
 	 * @return WP_REST_Response Response object.
 	 */
 	public function prepare_item_for_response( $post, $request ) {

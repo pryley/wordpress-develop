@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wrap">
 <h1><?php _e( 'Edit Comment' ); ?></h1>
 
-<div class="poststuff">
+<div id="poststuff">
 <input type="hidden" name="action" value="editedcomment" />
 <input type="hidden" name="comment_ID" value="<?php echo esc_attr( $comment->comment_ID ); ?>" />
 <input type="hidden" name="comment_post_ID" value="<?php echo esc_attr( $comment->comment_post_ID ); ?>" />
@@ -118,7 +118,7 @@ switch ( $comment->comment_approved ) {
 <label><input type="radio"<?php checked( $comment->comment_approved, 'spam' ); ?> name="comment_status" value="spam" /><?php _ex( 'Spam', 'comment status' ); ?></label>
 </fieldset>
 </div><!-- .misc-pub-section -->
-	
+
 <div class="misc-pub-section curtime misc-pub-curtime">
 <?php
 $submitted = sprintf(
@@ -214,7 +214,7 @@ endif;
 </div><!-- /submitdiv -->
 </div>
 
-<div class="postbox-container-2 postbox-container">
+<div id="postbox-container-2" class="postbox-container">
 <?php
 /** This action is documented in wp-admin/includes/meta-boxes.php */
 do_action( 'add_meta_boxes', 'comment', $comment );

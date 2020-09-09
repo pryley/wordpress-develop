@@ -61,7 +61,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Registers routes for revisions based on post types supporting revisions.
+	 * Registers the routes for revisions based on post types supporting revisions.
 	 *
 	 * @since 4.7.0
 	 *
@@ -160,7 +160,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 	 *
 	 * @since 4.7.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_items_permissions_check( $request ) {
@@ -169,9 +169,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 			return $parent;
 		}
 
-		$parent_post_type_obj = get_post_type_object( $parent->post_type );
-
-		if ( ! current_user_can( $parent_post_type_obj->cap->edit_post, $parent->ID ) ) {
+		if ( ! current_user_can( 'edit_post', $parent->ID ) ) {
 			return new WP_Error(
 				'rest_cannot_read',
 				__( 'Sorry, you are not allowed to view revisions of this post.' ),
@@ -214,7 +212,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 	 *
 	 * @since 4.7.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_items( $request ) {
@@ -363,7 +361,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 	 *
 	 * @since 4.7.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return bool|WP_Error True if the request has read access for the item, WP_Error object otherwise.
 	 */
 	public function get_item_permissions_check( $request ) {
@@ -375,23 +373,13 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 	 *
 	 * @since 4.7.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_item( $request ) {
 		$parent = $this->get_parent( $request['parent'] );
 		if ( is_wp_error( $parent ) ) {
 			return $parent;
-		}
-
-		$parent_post_type = get_post_type_object( $parent->post_type );
-
-		if ( ! current_user_can( $parent_post_type->cap->delete_post, $parent->ID ) ) {
-			return new WP_Error(
-				'rest_cannot_delete',
-				__( 'Sorry, you are not allowed to delete revisions of this post.' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
 		}
 
 		$revision = $this->get_revision( $request['id'] );
@@ -417,6 +405,16 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 			return $parent;
 		}
 
+		$parent_post_type = get_post_type_object( $parent->post_type );
+
+		if ( ! current_user_can( 'delete_post', $parent->ID ) ) {
+			return new WP_Error(
+				'rest_cannot_delete',
+				__( 'Sorry, you are not allowed to delete revisions of this post.' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
 		$revision = $this->get_revision( $request['id'] );
 		if ( is_wp_error( $revision ) ) {
 			return $revision;
@@ -427,9 +425,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 			return $response;
 		}
 
-		$post_type = get_post_type_object( 'revision' );
-
-		if ( ! current_user_can( $post_type->cap->delete_post, $revision->ID ) ) {
+		if ( ! current_user_can( 'delete_post', $revision->ID ) ) {
 			return new WP_Error(
 				'rest_cannot_delete',
 				__( 'Sorry, you are not allowed to delete this revision.' ),
@@ -446,7 +442,7 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller {
 	 * @since 4.7.0
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
-	 * @return true|WP_Error True on success, or WP_Error object on failure.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function delete_item( $request ) {
 		$revision = $this->get_revision( $request['id'] );
